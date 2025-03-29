@@ -42,7 +42,36 @@ To start the script, you are required to provide 3 environment variables. `INTER
 ...
 ```
 
+Once terminated, the created ipv6 addresses will be deleted.
+
 No further modification to the system is required. The web scanner and other applications can be used as normal. The only difference is that requests are now sent with alternating IP addresses. This means that IP-based blocking should not present an obstacle in the future – provided the website can be accessed through IPv6.
+
+## Example systemd setup
+
+Since we configure the script variables with environment variables, this can easily be integrated with systemd.
+
+Create a new file in `/etc/systemd/system/`, called `ripv6.service` for example with the following content:
+
+```
+[Unit]
+Description=IPv6 Address Rotator
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+Environment="INTERFACE=eth0"
+Environment="NETWORK_ADDR=2a0d:6116:cafe:1337"
+Environment="GATEWAY_ADDR=2a0d:6116:cafe::1"
+Environment="SLEEP_TIME=5m"
+Environment="MAX_IPS=5"
+ExecStart=/path/to/RIPv6/ripv6.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+```
 
 ## Planned features
 
